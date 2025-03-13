@@ -17,17 +17,43 @@ class Order {
         didSet {
             if specialRequestEnabled == false {
                 extraFrosting = false
-                addSprinkes = false
+                addSprinkles = false
             }
         }
     }
     var extraFrosting = false
-    var addSprinkes = false
+    var addSprinkles = false
     
     var name = ""
     var streetAddress = ""
     var city = ""
     var zip = ""
+    
+    var hasValidAddress: Bool {
+        if name.isEmpty || streetAddress.isEmpty || city.isEmpty || zip.isEmpty {
+            return false
+        }
+        return true
+    }
+    
+    var cost: Decimal {
+//        $2 per cake
+        var cost = Decimal(quantity) * 2
+        
+//        complicated cakes cost more
+        cost += Decimal(type) / 2
+        
+//        $1/cake for extra frosting
+        if extraFrosting {
+            cost += Decimal(quantity)
+        }
+        
+//        $0.50 per cake for sprinkles
+        if addSprinkles {
+            cost += Decimal(quantity) / 2
+        }
+        return cost
+    }
 }
 
 struct ContentView: View {
@@ -49,7 +75,7 @@ struct ContentView: View {
                     
                     if order.specialRequestEnabled {
                         Toggle("Add extra frosting", isOn: $order.extraFrosting)
-                        Toggle("Add extra sprinkes", isOn: $order.addSprinkes)
+                        Toggle("Add extra sprinkes", isOn: $order.addSprinkles)
                     }
                 }
                 Section {
