@@ -37,6 +37,11 @@ struct CheckoutView: View {
         .navigationTitle("Check out")
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
+        .alert("Thank you", isPresented: $showingConfirmation) {
+            Button("OK"){}
+        } message: {
+            Text(confirmationMessage)
+        }
     }
     func placeOrder() async {
         
@@ -53,7 +58,7 @@ struct CheckoutView: View {
         do {
             let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
             let decodedOrder = try JSONDecoder().decode(Order.self, from: data)
-            confirmationMessage = "Your oder for \(decodedOrder.quantity)X \(Order.types[decodedOrder.type].lowercased()) cupcakes is on its way!"
+            confirmationMessage = "Your order for \(decodedOrder.quantity)X \(Order.types[decodedOrder.type].lowercased()) cupcakes is on its way!"
             showingConfirmation = true
         } catch {
             print("Checkout failed: \(error.localizedDescription)")
